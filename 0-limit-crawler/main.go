@@ -12,12 +12,18 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
 )
+
+const rateLimit = time.Second
+
+var throttle = time.Tick(rateLimit)
 
 // Crawl uses `fetcher` from the `mockfetcher.go` file to imitate a
 // real crawler. It crawls until the maximum depth has reached.
 func Crawl(url string, depth int, wg *sync.WaitGroup) {
 	defer wg.Done()
+	<-throttle
 
 	if depth <= 0 {
 		return
